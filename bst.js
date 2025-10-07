@@ -120,6 +120,8 @@ function Tree(array) {
     }
   };
 
+  
+
   return {
     buildTree,
     prettyPrint,
