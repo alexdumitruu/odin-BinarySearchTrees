@@ -51,4 +51,6 @@ function Tree(arr) {
       prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
     }
   };
+
+  
 }
