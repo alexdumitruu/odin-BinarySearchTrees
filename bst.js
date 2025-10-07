@@ -1,7 +1,7 @@
 function Node() {
   let data = null;
-  let leftChild = null;
-  let rightChild = null;
+  let left = null;
+  let right = null;
 
   function getData() {
     return data;
@@ -11,17 +11,17 @@ function Node() {
   }
 
   function getLeftChild() {
-    return leftChild;
+    return left;
   }
   function setLeftChild(newLeftChild) {
-    leftChild = newLeftChild;
+    left = newLeftChild;
   }
 
   function getRightChild() {
-    return rightChild;
+    return right;
   }
   function setRightChild(newRightChild) {
-    rightChild = newRightChild;
+    right = newRightChild;
   }
 
   return {
@@ -34,23 +34,98 @@ function Node() {
   };
 }
 
-function Tree(arr) {
-  let root = buildTree();
-  let array = arr;
-  function buildTree(array) {}
+function Sort() {
+  function mergeSort(arr) {
+    if (!arr || arr.length <= 1) return arr.slice();
+
+    const middle = Math.floor(arr.length / 2);
+    const arrLeft = mergeSort(arr.slice(0, middle));
+    const arrRight = mergeSort(arr.slice(middle));
+
+    return merge(arrLeft, arrRight);
+  }
+
+  function merge(left, right) {
+    const result = [];
+    let l = 0,
+      r = 0;
+
+    while (l < left.length && r < right.length) {
+      if (left[l] < right[r]) {
+        if (result[result.length - 1] !== left[l]) result.push(left[l]);
+        l++;
+      } else if (left[l] > right[r]) {
+        if (result[result.length - 1] !== right[r]) result.push(right[r]);
+        r++;
+      } else {
+        if (result[result.length - 1] !== left[l]) result.push(left[l]);
+        l++;
+        r++;
+      }
+    }
+
+    while (l < left.length) {
+      if (result[result.length - 1] !== left[l]) result.push(left[l]);
+      l++;
+    }
+    while (r < right.length) {
+      if (result[result.length - 1] !== right[r]) result.push(right[r]);
+      r++;
+    }
+
+    return result;
+  }
+
+  return { mergeSort };
+}
+
+function Tree(array) {
+  function buildTree(array) {
+    const sortedArray = Sort().mergeSort(array);
+
+    function buildBalancedTree(arr) {
+      if (arr.length === 0) return null;
+
+      const mid = Math.floor(arr.length / 2);
+      const node = new Node();
+      node.setData(arr[mid]);
+
+      node.setLeftChild(buildBalancedTree(arr.slice(0, mid)));
+      node.setRightChild(buildBalancedTree(arr.slice(mid + 1)));
+
+      return node;
+    }
+
+    return buildBalancedTree(sortedArray);
+  }
 
   const prettyPrint = (node, prefix = "", isLeft = true) => {
-    if (node === null) {
+    if (!node) {
       return;
     }
-    if (node.right !== null) {
-      prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+    if (node.getRightChild()) {
+      prettyPrint(
+        node.getRightChild(),
+        `${prefix}${isLeft ? "│   " : "    "}`,
+        false
+      );
     }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-    if (node.left !== null) {
-      prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.getData()}`);
+    if (node.getLeftChild()) {
+      prettyPrint(
+        node.getLeftChild(),
+        `${prefix}${isLeft ? "    " : "│   "}`,
+        true
+      );
     }
   };
 
-  
+  return {
+    buildTree,
+    prettyPrint,
+  };
 }
+
+const tree = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+const root = tree.buildTree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+tree.prettyPrint(root);
