@@ -3,34 +3,10 @@ function Node() {
   let left = null;
   let right = null;
 
-  function getData() {
-    return data;
-  }
-  function setData(newData) {
-    data = newData;
-  }
-
-  function getLeftChild() {
-    return left;
-  }
-  function setLeftChild(newLeftChild) {
-    left = newLeftChild;
-  }
-
-  function getRightChild() {
-    return right;
-  }
-  function setRightChild(newRightChild) {
-    right = newRightChild;
-  }
-
   return {
-    getData,
-    setData,
-    getLeftChild,
-    setLeftChild,
-    getRightChild,
-    setRightChild,
+    data,
+    left,
+    right,
   };
 }
 
@@ -79,30 +55,22 @@ function Sort() {
   return { mergeSort };
 }
 
-function Tree(array = [], root = null) {
+function Tree(array = []) {
   // let array = [];
-  
-  function getArray() { return array; }
-  function setArray(newArray) { array = newArray; }
-
-  function getRoot() { return root; }
-  function setRoot(newRoot) { root = newRoot; }
 
   function buildTree(array) {
     const sortedArray = Sort().mergeSort(array);
-    setArray(sortedArray);
 
     function buildBalancedTree(arr) {
       if (arr.length === 0) return null;
 
       const mid = Math.floor(arr.length / 2);
       const node = new Node();
-      node.setData(arr[mid]);
+      node.data(arr[mid]);
 
-      node.setLeftChild(buildBalancedTree(arr.slice(0, mid)));
-      node.setRightChild(buildBalancedTree(arr.slice(mid + 1)));
+      node.left = buildBalancedTree(arr.slice(0, mid));
+      node.right = buildBalancedTree(arr.slice(mid + 1));
 
-      setRoot(node);
       return node;
     }
 
@@ -130,31 +98,62 @@ function Tree(array = [], root = null) {
     }
   };
 
-  function insert(value) {
-    let currNode = root;
+  function insert(root, value) {
+    if (root === null) return new Node(key);
+    if (root.data === value) return root;
 
-    if (currNode === null) {
-      return currNode;
-    }
+    if (value < root.data) root.left = insert(root.left, value);
+    else if (value > root.data) root.right = insert(root.right, value);
 
-    if (value <= currNode.getData()) {
-      currNode.getLeftChild() = insert(currNode.getLeftChild().getData());
-    }
-    else currNode.getRightChild() = insert(currNode.getRightChild().getData());
+    return root;
   }
 
-  function deleteItem(value) {
+  function deleteItem(root, value) {
+    function getSuccessor(curr) {
+    curr = curr.right;
+    while (curr !== null && curr.left !== null) {
+        curr = curr.left;
+      }
+      return curr;
+    }
+
+    if (root === null) {
+        return root;
+    }
+
+    // If key to be searched is in a subtree
+    if (root.data > value) {
+        root.left = delNode(root.left, value);
+    } else if (root.data < value) {
+        root.right = delNode(root.right, value);
+    } else {
+        // If root matches with the given key
+
+        // Cases when root has 0 children or 
+        // only right child
+        if (root.left === null) 
+            return root.right;
+
+        // When root has only left child
+        if (root.right === null) 
+            return root.left;
+
+        // When both children are present
+        let succ = getSuccessor(root);
+        root.data = succ.data;
+        root.right = delNode(root.right, succ.data);
+    }
+    return root;
 
   }
+
+  
 
   return {
     buildTree,
     prettyPrint,
-    getArray,
-    setArray,
-    getRoot,
-    setRoot,
     insert,
+    deleteItem,
 
   };
 }
