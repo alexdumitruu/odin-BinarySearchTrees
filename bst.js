@@ -147,14 +147,21 @@ function Tree(array = []) {
 
   }
 
-  
+  function find(root, value) {
+    let currNode = root;
+    if (value === root.data) return currNode;
+    else if (value < root.data) currNode = find(root.left, value);
+    else if (value > root.right) currNode = find(root.left, value);
+    return currNode;
+  }
 
   return {
     buildTree,
     prettyPrint,
     insert,
     deleteItem,
-
+    find,
+    
   };
 }
 
