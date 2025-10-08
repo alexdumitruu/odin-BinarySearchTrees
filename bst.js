@@ -79,9 +79,18 @@ function Sort() {
   return { mergeSort };
 }
 
-function Tree(array) {
+function Tree(array = [], root = null) {
+  // let array = [];
+  
+  function getArray() { return array; }
+  function setArray(newArray) { array = newArray; }
+
+  function getRoot() { return root; }
+  function setRoot(newRoot) { root = newRoot; }
+
   function buildTree(array) {
     const sortedArray = Sort().mergeSort(array);
+    setArray(sortedArray);
 
     function buildBalancedTree(arr) {
       if (arr.length === 0) return null;
@@ -93,6 +102,7 @@ function Tree(array) {
       node.setLeftChild(buildBalancedTree(arr.slice(0, mid)));
       node.setRightChild(buildBalancedTree(arr.slice(mid + 1)));
 
+      setRoot(node);
       return node;
     }
 
@@ -120,11 +130,32 @@ function Tree(array) {
     }
   };
 
-  
+  function insert(value) {
+    let currNode = root;
+
+    if (currNode === null) {
+      return currNode;
+    }
+
+    if (value <= currNode.getData()) {
+      currNode.getLeftChild() = insert(currNode.getLeftChild().getData());
+    }
+    else currNode.getRightChild() = insert(currNode.getRightChild().getData());
+  }
+
+  function deleteItem(value) {
+
+  }
 
   return {
     buildTree,
     prettyPrint,
+    getArray,
+    setArray,
+    getRoot,
+    setRoot,
+    insert,
+
   };
 }
 
